@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContactManager_WebApp.Models;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+using System.Text;
+
 
 namespace ContactManager_WebApp.Controllers
 {
@@ -24,24 +27,32 @@ namespace ContactManager_WebApp.Controllers
             return View(await _context.Contacts.ToListAsync());
         }
 
-        // GET: Contacts/Create
-        public IActionResult Create()
+        // GET: Contacts/UploadCsv
+        public IActionResult UploadCsv()
         {
             return View();
         }
 
-        // POST: Contacts/Create
+        // POST: Contacts/UploadCsv
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DateOfBirth,Married,Phone,Salary")] Contact contact)
+        public async Task<IActionResult> UploadCsv(IFormFile file)
         {
-            if (ModelState.IsValid)
+            if (file == null || file.Length == 0)
             {
-                _context.Add(contact);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = false, message = "No file uploaded." });
             }
-            return View(contact);
+
+            using (var stream = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
+            {
+                var csv = new CsvHelper.CsvReader(stream, System.Globalization.CultureInfo.InvariantCulture);
+                var records = csv.GetRecords<Contact>().ToList();
+
+                _context.AddRange(records);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Contacts/Edit/5
