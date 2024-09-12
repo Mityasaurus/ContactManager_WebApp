@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContactManager_WebApp.Models;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 using System.Text;
 using ContactManager_WebApp.Mappers;
 
@@ -44,18 +43,30 @@ namespace ContactManager_WebApp.Controllers
                 return Json(new { success = false, message = "No file uploaded." });
             }
 
-            using (var stream = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
+            try
             {
-                var csv = new CsvHelper.CsvReader(stream, System.Globalization.CultureInfo.InvariantCulture);
-                csv.Context.RegisterClassMap<ContactMap>();
-
-                var records = csv.GetRecords<Contact>().ToList();
+                var records = GetRecordsFromFile(file);
                 _context.AddRange(records);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return View();
             }
 
             return RedirectToAction(nameof(Index));
         }
+
+        private IEnumerable<Contact> GetRecordsFromFile(IFormFile file)
+        {
+            using var stream = new StreamReader(file.OpenReadStream(), Encoding.UTF8);
+            using var csv = new CsvHelper.CsvReader(stream, System.Globalization.CultureInfo.InvariantCulture);
+
+            csv.Context.RegisterClassMap<ContactMap>();
+            var records = csv.GetRecords<Contact>().ToList();
+            return records;
+        }
+
 
         // GET: Contacts/Edit/5
         public async Task<IActionResult> Edit(int? id)

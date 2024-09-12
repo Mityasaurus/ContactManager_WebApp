@@ -9,50 +9,187 @@
 <p>
     <a asp-action="UploadCsv">Create New (Upload CSV)</a>
 </p>
-<table class="table">
+
+<table class="table" id="contactsTable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
+            <th data-column="name">
+                <p>
+                    Name
+                </p>
+                <input type="text" id="filterName" placeholder="Filter by Name" />
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfBirth)
+            <th data-column="dateOfBirth">
+                <p>
+                    Date of Birth
+                </p>
+                <input type="text" id="filterDateOfBirth" placeholder="Filter by Date of Birth" />
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Married)
+            <th data-column="married">
+                <p>
+                    Married
+                </p>
+                <select id="filterMarried">
+                    <option value="">All</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
+            <th data-column="phone">
+                <p>
+                    Phone
+                </p>
+                <input type="text" id="filterPhone" placeholder="Filter by Phone" />
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salary)
+            <th data-column="salary">
+                <p>
+                    Salary
+                </p>
+                <input type="text" id="filterSalary" placeholder="Filter by Salary" />
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @(item.Married ? "Yes" : "No")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                <td>@(item.Married ? "Yes" : "No")</td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td>@Html.DisplayFor(modelItem => item.Salary)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Styles {
+    <style>
+        th {
+            cursor: pointer;
+        }
+
+        th p {
+            margin: 0;
+            padding: 8px;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        th p:hover {
+            color: #007bff;
+        }
+
+        th.asc p::after {
+            content: "";
+        }
+
+        th.desc p::after {
+            content: "";
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('contactsTable');
+            const filterName = document.getElementById('filterName');
+            const filterDateOfBirth = document.getElementById('filterDateOfBirth');
+            const filterMarried = document.getElementById('filterMarried');
+            const filterPhone = document.getElementById('filterPhone');
+            const filterSalary = document.getElementById('filterSalary');
+            const headers = table.querySelectorAll('thead th');
+            let sortColumn = null;
+            let sortOrder = 'asc';
+
+            function filterTable() {
+                const name = filterName.value.toLowerCase();
+                const dateOfBirth = filterDateOfBirth.value.toLowerCase();
+                const married = filterMarried.value;
+                const phone = filterPhone.value.toLowerCase();
+                const salary = filterSalary.value.toLowerCase();
+
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+                rows.forEach(row => {
+                    const cells = row.children;
+                    const nameCell = cells[0].textContent.toLowerCase();
+                    const dateOfBirthCell = cells[1].textContent.toLowerCase();
+                    const marriedCell = cells[2].textContent;
+                    const phoneCell = cells[3].textContent.toLowerCase();
+                    const salaryCell = cells[4].textContent.toLowerCase();
+
+                    const isMatch =
+                        (!name || nameCell.includes(name)) &&
+                        (!dateOfBirth || dateOfBirthCell.includes(dateOfBirth)) &&
+                        (!married || marriedCell === married) &&
+                        (!phone || phoneCell.includes(phone)) &&
+                        (!salary || salaryCell.includes(salary));
+
+                    row.style.display = isMatch ? '' : 'none';
+                });
+
+                sortRows();
+            }
+
+            function sortRows() {
+                if (sortColumn === null) return;
+
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+                const columnIndex = Array.from(headers).findIndex(th => th.getAttribute('data-column') === sortColumn);
+
+                rows.sort((a, b) => {
+                    const aText = a.children[columnIndex].textContent.trim();
+                    const bText = b.children[columnIndex].textContent.trim();
+
+                    if (sortColumn === 'married') {
+                        return sortOrder === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                    }
+
+                    const aValue = isNaN(aText) ? aText : parseFloat(aText);
+                    const bValue = isNaN(bText) ? bText : parseFloat(bText);
+
+                    if (sortOrder === 'asc') {
+                        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                    } else {
+                        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+                    }
+                });
+
+                const tbody = table.querySelector('tbody');
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            headers.forEach(header => {
+                const p = header.querySelector('th p');
+                if (p) {
+                    p.addEventListener('click', function () {
+                        const column = header.getAttribute('data-column');
+                        const currentOrder = header.classList.contains('asc') ? 'asc' : 'desc';
+                        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+
+                        sortColumn = column;
+                        sortOrder = newOrder;
+
+                        headers.forEach(th => th.classList.remove('asc', 'desc'));
+                        header.classList.add(newOrder);
+
+                        filterTable();
+                    });
+                }
+            });
+
+            filterName.addEventListener('input', filterTable);
+            filterDateOfBirth.addEventListener('input', filterTable);
+            filterMarried.addEventListener('change', filterTable);
+            filterPhone.addEventListener('input', filterTable);
+            filterSalary.addEventListener('input', filterTable);
+        });
+    </script>
+}
