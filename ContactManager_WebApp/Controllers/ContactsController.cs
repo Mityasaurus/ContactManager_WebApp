@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ContactManager_WebApp.Models;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using System.Text;
+using ContactManager_WebApp.Mappers;
 
 
 namespace ContactManager_WebApp.Controllers
@@ -46,8 +47,9 @@ namespace ContactManager_WebApp.Controllers
             using (var stream = new StreamReader(file.OpenReadStream(), Encoding.UTF8))
             {
                 var csv = new CsvHelper.CsvReader(stream, System.Globalization.CultureInfo.InvariantCulture);
-                var records = csv.GetRecords<Contact>().ToList();
+                csv.Context.RegisterClassMap<ContactMap>();
 
+                var records = csv.GetRecords<Contact>().ToList();
                 _context.AddRange(records);
                 await _context.SaveChangesAsync();
             }
