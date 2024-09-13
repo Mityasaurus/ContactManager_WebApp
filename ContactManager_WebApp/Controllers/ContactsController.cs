@@ -5,9 +5,9 @@ using ContactManager_WebApp.Services;
 
 namespace ContactManager_WebApp.Controllers
 {
-    public class ContactsController(ContactManagerContext context, ILogger<ContactsController> logger, ICsvFileReader<Contact> csvFileReader) : Controller
+    public class ContactsController(IRepository<Contact> repository, ILogger<ContactsController> logger, ICsvFileReader<Contact> csvFileReader) : Controller
     {
-        private readonly ContactManagerContext _context = context;
+        private readonly IRepository<Contact> _repository = repository;
         private readonly ILogger<ContactsController> _logger = logger;
         private readonly ICsvFileReader<Contact> _csvFileReader = csvFileReader;
 
@@ -15,7 +15,7 @@ namespace ContactManager_WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             _logger.LogInformation("Fetching all contacts from the database.");
-            var contacts = await _context.Contacts.ToListAsync();
+            var contacts = await _repository.GetAllAsync();
             return View(contacts);
         }
 
@@ -34,24 +34,23 @@ namespace ContactManager_WebApp.Controllers
             if (file == null || file.Length == 0)
             {
                 _logger.LogWarning("No file uploaded.");
-                return Json(new { success = false, message = "No file uploaded." });
-            }
-
-            try
-            {
-                _logger.LogInformation("Processing CSV file upload.");
-                var records = _csvFileReader.GetRecordsFromFile(file);
-                _context.AddRange(records);
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("CSV file uploaded and records saved successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while processing the CSV file.");
                 return View();
             }
 
-            return RedirectToAction(nameof(Index));
+            _logger.LogInformation("Processing CSV file upload.");
+            var records = _csvFileReader.GetRecordsFromFile(file);
+
+            var result = await _repository.AddRangeAsync(records);
+            if (result)
+            {
+                _logger.LogInformation("CSV file uploaded and records saved successfully.");
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                _logger.LogError("Error occurred while saving records to the database.");
+                return View();
+            }
         }
 
         // POST: Contacts/Edit/5
@@ -71,26 +70,24 @@ namespace ContactManager_WebApp.Controllers
                 return BadRequest();
             }
 
-            try
+            var result = await _repository.UpdateAsync(contact);
+            if (result)
             {
-                _context.Update(contact);
-                await _context.SaveChangesAsync();
                 _logger.LogInformation("Contact with ID {Id} updated successfully.", id);
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException ex)
+            else
             {
-                _logger.LogError(ex, "Concurrency error occurred while updating contact with ID {Id}.", id);
+                _logger.LogError("Error occurred while updating contact with ID {Id}.", id);
                 if (!ContactExists(contact.Id))
                 {
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    throw new DbUpdateConcurrencyException();
                 }
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Contacts/Delete/5
@@ -102,8 +99,7 @@ namespace ContactManager_WebApp.Controllers
                 return NotFound();
             }
 
-            var contact = await _context.Contacts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contact = await _repository.GetAsync(id.Value);
             if (contact == null)
             {
                 _logger.LogWarning("Contact with ID {Id} not found.", id);
@@ -118,24 +114,30 @@ namespace ContactManager_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
+            var contact = await _repository.GetAsync(id);
             if (contact != null)
             {
-                _context.Contacts.Remove(contact);
-                _logger.LogInformation("Contact with ID {Id} deleted successfully.", id);
+                var result = await _repository.DeleteAsync(id);
+                if (result)
+                {
+                    _logger.LogInformation("Contact with ID {Id} deleted successfully.", id);
+                }
+                else
+                {
+                    _logger.LogError("Error occurred while deleting contact with ID {Id}.", id);
+                }
             }
             else
             {
                 _logger.LogWarning("Attempted to delete non-existent contact with ID {Id}.", id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ContactExists(int id)
         {
-            return _context.Contacts.Any(e => e.Id == id);
+            return _repository.GetAllAsync().Result.Any(e => e.Id == id);
         }
     }
 }

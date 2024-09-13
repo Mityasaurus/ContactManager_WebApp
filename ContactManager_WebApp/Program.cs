@@ -8,7 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ContactManagerContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ICsvFileReader<Contact>, CsvFileReader>();
+builder.Services.AddCsvReaderService();
+
+builder.Services.AddRepositoryService();
 
 builder.Services.AddControllersWithViews();
 
