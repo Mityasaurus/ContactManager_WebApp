@@ -1,4 +1,5 @@
 using ContactManager_WebApp.Models;
+using ContactManager_WebApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<ContactManagerContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ICsvFileReader<Contact>, CsvFileReader>();
 
 builder.Services.AddControllersWithViews();
 

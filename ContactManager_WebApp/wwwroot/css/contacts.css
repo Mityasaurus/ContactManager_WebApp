@@ -1,0 +1,22 @@
+﻿th {
+    cursor: pointer;
+}
+
+th p {
+    margin: 0;
+    padding: 8px;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+th p:hover {
+    color: #007bff;
+}
+
+th.asc p::after {
+    content: "";
+}
+
+th.desc p::after {
+    content: "";
+}

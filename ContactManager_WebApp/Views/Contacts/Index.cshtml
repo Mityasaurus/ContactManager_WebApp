@@ -4,270 +4,110 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="UploadCsv">Create New (Upload CSV)</a>
-</p>
+    <p>
+        <a asp-action="UploadCsv" class="btn btn-success mb-3">Create New (Upload CSV)</a>
+    </p>
 
-<table class="table" id="contactsTable">
-    <thead>
-        <tr>
-            <th data-column="name">
-                <p>Name</p>
-                <input type="text" id="filterName" placeholder="Filter by Name" />
-            </th>
-            <th data-column="dateOfBirth">
-                <p>Date of Birth</p>
-                <input type="text" id="filterDateOfBirth" placeholder="Filter by Date of Birth" />
-            </th>
-            <th data-column="married">
-                <p>Married</p>
-                <select id="filterMarried">
-                    <option value="">All</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </th>
-            <th data-column="phone">
-                <p>Phone</p>
-                <input type="text" id="filterPhone" placeholder="Filter by Phone" />
-            </th>
-            <th data-column="salary">
-                <p>Salary</p>
-                <input type="text" id="filterSalary" placeholder="Filter by Salary" />
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-striped table-bordered" id="contactsTable">
+        <thead class="thead-dark">
             <tr>
-                <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="@item.Id" name="Id" value="@item.Id" />
-                <td>
-                    <div class="view-mode">
-                            @Html.DisplayFor(modelItem => item.Name)
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input asp-for="@item.Name" name="Name" class="form-control" value="@item.Name" required/>
-                    </div>
-                </td>
-                <td>
-                    <div class="view-mode">
-                            @Html.DisplayFor(modelItem => item.DateOfBirth)
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input type="date" asp-for="@item.DateOfBirth" name="DateOfBirth" class="form-control" value="@item.DateOfBirth.ToString("yyyy-MM-dd")" required />
-                    </div>
-                </td>
-                <td>
-                    <div class="view-mode">
-                            @(item.Married ? "Yes" : "No")
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input asp-for="@item.Married" name="Married" type="checkbox" />
-                    </div>
-                </td>
-                <td>
-                    <div class="view-mode">
-                            @Html.DisplayFor(modelItem => item.Phone)
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input asp-for="@item.Phone" name="Phone" class="form-control" value="@item.Phone" required />
-                    </div>
-                </td>
-                <td>
-                    <div class="view-mode">
-                            @Html.DisplayFor(modelItem => item.Salary)
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input asp-for="@item.Salary" name="Salary" class="form-control" value="@item.Salary" required/>
-                    </div>
-                </td>
-                <td>
-                    <div class="view-mode">
-                        <a class="btn btn-primary edit-btn" href="#" data-id="@item.Id">Edit</a>
-                        <a class="btn btn-danger delete-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </div>
-                    <div class="edit-mode" style="display:none;">
-                        <input type="submit" value="Save" class="btn btn-primary" />
-                        <a class="btn btn-secondary cancel-btn">Cancel</a>
-                    </div>
-                </td>
-                </form>
+                <th data-column="name">
+                    <p>Name</p>
+                    <input type="text" id="filterName" class="form-control" placeholder="Filter by Name" />
+                </th>
+                <th data-column="dateOfBirth">
+                    <p>Date of Birth</p>
+                    <input type="text" id="filterDateOfBirth" class="form-control" placeholder="Filter by Date of Birth" />
+                </th>
+                <th data-column="married">
+                    <p>Married</p>
+                    <select id="filterMarried" class="form-control">
+                        <option value="">All</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </th>
+                <th data-column="phone">
+                    <p>Phone</p>
+                    <input type="text" id="filterPhone" class="form-control" placeholder="Filter by Phone" />
+                </th>
+                <th data-column="salary">
+                    <p>Salary</p>
+                    <input type="text" id="filterSalary" class="form-control" placeholder="Filter by Salary" />
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <form asp-action="Edit" method="post" class="w-100">
+                        <input type="hidden" asp-for="@item.Id" name="Id" value="@item.Id" />
+                    <td>
+                        <div class="view-mode">
+                                @Html.DisplayFor(modelItem => item.Name)
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input asp-for="@item.Name" name="Name" class="form-control" value="@item.Name" required />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="view-mode">
+                                @Html.DisplayFor(modelItem => item.DateOfBirth)
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input type="date" asp-for="@item.DateOfBirth" name="DateOfBirth" class="form-control" value="@item.DateOfBirth.ToString("yyyy-MM-dd")" required />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="view-mode">
+                                @(item.Married ? "Yes" : "No")
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input asp-for="@item.Married" name="Married" type="checkbox" class="form-check-input" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="view-mode">
+                                @Html.DisplayFor(modelItem => item.Phone)
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input asp-for="@item.Phone" name="Phone" class="form-control" value="@item.Phone" required />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="view-mode">
+                                @Html.DisplayFor(modelItem => item.Salary)
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input asp-for="@item.Salary" name="Salary" class="form-control" value="@item.Salary" required />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="view-mode">
+                            <a class="btn btn-primary edit-btn" href="#" data-id="@item.Id">Edit</a>
+                            <a class="btn btn-danger delete-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </div>
+                        <div class="edit-mode" style="display:none;">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a class="btn btn-secondary cancel-btn">Cancel</a>
+                        </div>
+                    </td>
+                    </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @section Styles {
-    <style>
-        th {
-            cursor: pointer;
-        }
-
-            th p {
-                margin: 0;
-                padding: 8px;
-                transition: color 0.3s;
-                cursor: pointer;
-            }
-
-                th p:hover {
-                    color: #007bff;
-                }
-
-            th.asc p::after {
-                content: "";
-            }
-
-            th.desc p::after {
-                content: "";
-            }
-    </style>
+    <link rel="stylesheet" href="~/css/contacts.css" />
 }
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const table = document.getElementById('contactsTable');
-            const filterName = document.getElementById('filterName');
-            const filterDateOfBirth = document.getElementById('filterDateOfBirth');
-            const filterMarried = document.getElementById('filterMarried');
-            const filterPhone = document.getElementById('filterPhone');
-            const filterSalary = document.getElementById('filterSalary');
-            const headers = table.querySelectorAll('thead th');
-            let sortColumn = null;
-            let sortOrder = 'asc';
-
-            function filterTable() {
-                const name = filterName.value.toLowerCase();
-                const dateOfBirth = filterDateOfBirth.value.toLowerCase();
-                const married = filterMarried.value;
-                const phone = filterPhone.value.toLowerCase();
-                const salary = filterSalary.value.toLowerCase();
-
-                const rows = Array.from(table.querySelectorAll('tbody tr'));
-
-                rows.forEach(row => {
-                    const cells = row.children;
-                    const nameCell = cells[2].querySelector('.view-mode').textContent.toLowerCase();
-                    const dateOfBirthCell = cells[3].querySelector('.view-mode').textContent.toLowerCase();
-                    const marriedCell = cells[4].querySelector('.view-mode').textContent.trim();
-                    const phoneCell = cells[5].querySelector('.view-mode').textContent.toLowerCase();
-                    const salaryCell = cells[6].querySelector('.view-mode').textContent.toLowerCase();
-
-                    const isMatch =
-                        (!name || nameCell.includes(name)) &&
-                        (!dateOfBirth || dateOfBirthCell.includes(dateOfBirth)) &&
-                        (!married || marriedCell === married) &&
-                        (!phone || phoneCell.includes(phone)) &&
-                        (!salary || salaryCell.includes(salary));
-
-                    row.style.display = isMatch ? '' : 'none';
-                });
-
-                sortRows();
-            }
-
-            function sortRows() {
-                if (sortColumn === null) return;
-
-                const rows = Array.from(table.querySelectorAll('tbody tr'));
-                const columnIndex = Array.from(headers).findIndex(th => th.getAttribute('data-column') === sortColumn);
-
-                rows.sort((a, b) => {
-                    const aText = a.children[columnIndex + 2].querySelector('.view-mode').textContent.trim();
-                    const bText = b.children[columnIndex + 2].querySelector('.view-mode').textContent.trim();
-
-                    if (sortColumn === 'married') {
-                        return sortOrder === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
-                    }
-
-                    const aValue = isNaN(aText) ? aText : parseFloat(aText);
-                    const bValue = isNaN(bText) ? bText : parseFloat(bText);
-
-                    if (sortOrder === 'asc') {
-                        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-                    } else {
-                        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-                    }
-                });
-
-                const tbody = table.querySelector('tbody');
-                rows.forEach(row => tbody.appendChild(row));
-            }
-
-            headers.forEach(header => {
-                const p = header.querySelector('th p');
-                if (p) {
-                    p.addEventListener('click', function () {
-                        const column = header.getAttribute('data-column');
-                        const currentOrder = header.classList.contains('asc') ? 'asc' : 'desc';
-                        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-
-                        sortColumn = column;
-                        sortOrder = newOrder;
-
-                        headers.forEach(th => th.classList.remove('asc', 'desc'));
-                        header.classList.add(newOrder);
-
-                        filterTable();
-                    });
-                }
-            });
-
-            filterName.addEventListener('input', filterTable);
-            filterDateOfBirth.addEventListener('input', filterTable);
-            filterMarried.addEventListener('change', filterTable);
-            filterPhone.addEventListener('input', filterTable);
-            filterSalary.addEventListener('input', filterTable);
-
-            document.querySelectorAll('.edit-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const row = event.target.closest('tr');
-                    row.querySelectorAll('.view-mode').forEach(element => element.style.display = 'none');
-                    row.querySelectorAll('.edit-mode').forEach(element => element.style.display = 'block');
-                });
-            });
-
-            document.querySelectorAll('.cancel-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const row = event.target.closest('tr');
-                    row.querySelectorAll('.view-mode').forEach(element => element.style.display = 'block');
-                    row.querySelectorAll('.edit-mode').forEach(element => element.style.display = 'none');
-                });
-            });
-
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', function (event) {
-                    const row = event.target.closest('tr');
-                    const nameInput = row.querySelector('input[name="Name"]');
-                    const dateOfBirthInput = row.querySelector('input[name="DateOfBirth"]');
-                    const phoneInput = row.querySelector('input[name="Phone"]');
-                    const salaryInput = row.querySelector('input[name="Salary"]');
-
-                    let valid = true;
-
-                    if (!nameInput.value.trim() || !dateOfBirthInput.value.trim() || !phoneInput.value.trim()) {
-                        valid = false;
-                        alert('Name, Date of Birth, and Phone cannot be empty.');
-                    }
-                    const salaryValue = parseFloat(salaryInput.value);
-                    if (isNaN(salaryValue) || salaryValue < 0) {
-                        valid = false;
-                        alert('Salary must be a positive number.');
-                    }
-
-                    if (!valid) {
-                        event.preventDefault();
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="~/js/contacts.js"></script>
 }
