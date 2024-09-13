@@ -14,21 +14,15 @@
     <thead>
         <tr>
             <th data-column="name">
-                <p>
-                    Name
-                </p>
+                <p>Name</p>
                 <input type="text" id="filterName" placeholder="Filter by Name" />
             </th>
             <th data-column="dateOfBirth">
-                <p>
-                    Date of Birth
-                </p>
+                <p>Date of Birth</p>
                 <input type="text" id="filterDateOfBirth" placeholder="Filter by Date of Birth" />
             </th>
             <th data-column="married">
-                <p>
-                    Married
-                </p>
+                <p>Married</p>
                 <select id="filterMarried">
                     <option value="">All</option>
                     <option value="Yes">Yes</option>
@@ -36,15 +30,11 @@
                 </select>
             </th>
             <th data-column="phone">
-                <p>
-                    Phone
-                </p>
+                <p>Phone</p>
                 <input type="text" id="filterPhone" placeholder="Filter by Phone" />
             </th>
             <th data-column="salary">
-                <p>
-                    Salary
-                </p>
+                <p>Salary</p>
                 <input type="text" id="filterSalary" placeholder="Filter by Salary" />
             </th>
             <th></th>
@@ -54,15 +44,59 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
-                <td>@(item.Married ? "Yes" : "No")</td>
-                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td>@Html.DisplayFor(modelItem => item.Salary)</td>
+                <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="@item.Id" name="Id" value="@item.Id" />
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <div class="view-mode">
+                            @Html.DisplayFor(modelItem => item.Name)
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input asp-for="@item.Name" name="Name" class="form-control" value="@item.Name" required/>
+                    </div>
                 </td>
+                <td>
+                    <div class="view-mode">
+                            @Html.DisplayFor(modelItem => item.DateOfBirth)
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input type="date" asp-for="@item.DateOfBirth" name="DateOfBirth" class="form-control" value="@item.DateOfBirth.ToString("yyyy-MM-dd")" required />
+                    </div>
+                </td>
+                <td>
+                    <div class="view-mode">
+                            @(item.Married ? "Yes" : "No")
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input asp-for="@item.Married" name="Married" type="checkbox" />
+                    </div>
+                </td>
+                <td>
+                    <div class="view-mode">
+                            @Html.DisplayFor(modelItem => item.Phone)
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input asp-for="@item.Phone" name="Phone" class="form-control" value="@item.Phone" required />
+                    </div>
+                </td>
+                <td>
+                    <div class="view-mode">
+                            @Html.DisplayFor(modelItem => item.Salary)
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input asp-for="@item.Salary" name="Salary" class="form-control" value="@item.Salary" required/>
+                    </div>
+                </td>
+                <td>
+                    <div class="view-mode">
+                        <a class="btn btn-primary edit-btn" href="#" data-id="@item.Id">Edit</a>
+                        <a class="btn btn-danger delete-btn" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </div>
+                    <div class="edit-mode" style="display:none;">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <a class="btn btn-secondary cancel-btn">Cancel</a>
+                    </div>
+                </td>
+                </form>
             </tr>
         }
     </tbody>
@@ -74,24 +108,24 @@
             cursor: pointer;
         }
 
-        th p {
-            margin: 0;
-            padding: 8px;
-            transition: color 0.3s;
-            cursor: pointer;
-        }
+            th p {
+                margin: 0;
+                padding: 8px;
+                transition: color 0.3s;
+                cursor: pointer;
+            }
 
-        th p:hover {
-            color: #007bff;
-        }
+                th p:hover {
+                    color: #007bff;
+                }
 
-        th.asc p::after {
-            content: "";
-        }
+            th.asc p::after {
+                content: "";
+            }
 
-        th.desc p::after {
-            content: "";
-        }
+            th.desc p::after {
+                content: "";
+            }
     </style>
 }
 
@@ -119,11 +153,11 @@
 
                 rows.forEach(row => {
                     const cells = row.children;
-                    const nameCell = cells[0].textContent.toLowerCase();
-                    const dateOfBirthCell = cells[1].textContent.toLowerCase();
-                    const marriedCell = cells[2].textContent;
-                    const phoneCell = cells[3].textContent.toLowerCase();
-                    const salaryCell = cells[4].textContent.toLowerCase();
+                    const nameCell = cells[2].querySelector('.view-mode').textContent.toLowerCase();
+                    const dateOfBirthCell = cells[3].querySelector('.view-mode').textContent.toLowerCase();
+                    const marriedCell = cells[4].querySelector('.view-mode').textContent.trim();
+                    const phoneCell = cells[5].querySelector('.view-mode').textContent.toLowerCase();
+                    const salaryCell = cells[6].querySelector('.view-mode').textContent.toLowerCase();
 
                     const isMatch =
                         (!name || nameCell.includes(name)) &&
@@ -145,8 +179,8 @@
                 const columnIndex = Array.from(headers).findIndex(th => th.getAttribute('data-column') === sortColumn);
 
                 rows.sort((a, b) => {
-                    const aText = a.children[columnIndex].textContent.trim();
-                    const bText = b.children[columnIndex].textContent.trim();
+                    const aText = a.children[columnIndex + 2].querySelector('.view-mode').textContent.trim();
+                    const bText = b.children[columnIndex + 2].querySelector('.view-mode').textContent.trim();
 
                     if (sortColumn === 'married') {
                         return sortOrder === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
@@ -190,6 +224,50 @@
             filterMarried.addEventListener('change', filterTable);
             filterPhone.addEventListener('input', filterTable);
             filterSalary.addEventListener('input', filterTable);
+
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const row = event.target.closest('tr');
+                    row.querySelectorAll('.view-mode').forEach(element => element.style.display = 'none');
+                    row.querySelectorAll('.edit-mode').forEach(element => element.style.display = 'block');
+                });
+            });
+
+            document.querySelectorAll('.cancel-btn').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const row = event.target.closest('tr');
+                    row.querySelectorAll('.view-mode').forEach(element => element.style.display = 'block');
+                    row.querySelectorAll('.edit-mode').forEach(element => element.style.display = 'none');
+                });
+            });
+
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    const row = event.target.closest('tr');
+                    const nameInput = row.querySelector('input[name="Name"]');
+                    const dateOfBirthInput = row.querySelector('input[name="DateOfBirth"]');
+                    const phoneInput = row.querySelector('input[name="Phone"]');
+                    const salaryInput = row.querySelector('input[name="Salary"]');
+
+                    let valid = true;
+
+                    if (!nameInput.value.trim() || !dateOfBirthInput.value.trim() || !phoneInput.value.trim()) {
+                        valid = false;
+                        alert('Name, Date of Birth, and Phone cannot be empty.');
+                    }
+                    const salaryValue = parseFloat(salaryInput.value);
+                    if (isNaN(salaryValue) || salaryValue < 0) {
+                        valid = false;
+                        alert('Salary must be a positive number.');
+                    }
+
+                    if (!valid) {
+                        event.preventDefault();
+                    }
+                });
+            });
         });
     </script>
 }

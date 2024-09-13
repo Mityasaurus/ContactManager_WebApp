@@ -68,21 +68,21 @@ namespace ContactManager_WebApp.Controllers
         }
 
 
-        // GET: Contacts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Contacts/Edit/5
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var contact = await _context.Contacts.FindAsync(id);
-            if (contact == null)
-            {
-                return NotFound();
-            }
-            return View(contact);
-        }
+        //    var contact = await _context.Contacts.FindAsync(id);
+        //    if (contact == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(contact);
+        //}
 
         // POST: Contacts/Edit/5
         [HttpPost]
@@ -114,8 +114,9 @@ namespace ContactManager_WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(contact);
+            return BadRequest();
         }
+
 
         // GET: Contacts/Delete/5
         public async Task<IActionResult> Delete(int? id)
