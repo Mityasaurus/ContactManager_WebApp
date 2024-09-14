@@ -139,7 +139,7 @@ namespace ContactManager_WebApp.Controllers
             return _repository.GetAllAsync().Result.Any(e => e.Id == id);
         }
 
-        private IActionResult ErrorView(string message)
+        private ViewResult ErrorView(string message)
         {
             return View("_Error", new ErrorViewModel { Message = message });
         }
