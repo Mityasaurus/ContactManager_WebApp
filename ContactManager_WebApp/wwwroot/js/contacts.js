@@ -124,6 +124,15 @@
                 valid = false;
                 alert('Name, Date of Birth, and Phone cannot be empty.');
             }
+
+            const phoneValue = phoneInput.value.trim();
+            console.log(phoneValue);
+            const phoneRegex = /^\+(\d{11,})$/;
+            if (!phoneRegex.test(phoneValue)) {
+                valid = false;
+                alert('Phone must start with a "+" and contain at least 12 characters with digits only.');
+            }
+
             const salaryValue = parseFloat(salaryInput.value);
             if (isNaN(salaryValue) || salaryValue < 0) {
                 valid = false;

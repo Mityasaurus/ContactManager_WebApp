@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ContactManager_WebApp.Models;
 using ContactManager_WebApp.Services;
 using ContactManager_WebApp.Data.Interfaces;
@@ -32,10 +31,10 @@ namespace ContactManager_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadCsv(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            if (file?.Length <= 0 || file == null)
             {
-                _logger.LogWarning("No file uploaded.");
-                return View("_Error", new ErrorViewModel { Message = "No file was uploaded." });
+                _logger.LogWarning("Invalid or empty file uploaded.");
+                return ErrorView("No file was uploaded or file is empty.");
             }
 
             _logger.LogInformation("Processing CSV file upload.");
@@ -44,10 +43,10 @@ namespace ContactManager_WebApp.Controllers
             {
                 records = _csvFileReader.GetRecordsFromFile(file);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
-                return View("_Error", new ErrorViewModel { Message = "Invalid file format." });
+                _logger.LogError(ex, "Error parsing CSV file.");
+                return ErrorView("Invalid file format.");
             }
 
             var result = await _repository.AddRangeAsync(records);
@@ -58,9 +57,7 @@ namespace ContactManager_WebApp.Controllers
             }
             else
             {
-                string message = "Error occurred while saving records to the database.";
-                _logger.LogError(message);
-                return View("_Error", new ErrorViewModel { Message = message });
+                return ErrorView("Error occurred while saving records to the database.");
             }
         }
 
@@ -72,13 +69,13 @@ namespace ContactManager_WebApp.Controllers
             if (id != contact.Id)
             {
                 _logger.LogWarning("Contact ID mismatch: {Id}", id);
-                return View("_Error", new ErrorViewModel { Message = "Contact ID mismatch." });
+                return ErrorView("Contact ID mismatch.");
             }
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Invalid model state for contact update.");
-                return View("_Error", new ErrorViewModel { Message = "Invalid data provided." });
+                _logger.LogWarning("Invalid model state.");
+                return ErrorView("Invalid data provided.");
             }
 
             var result = await _repository.UpdateAsync(contact);
@@ -89,15 +86,7 @@ namespace ContactManager_WebApp.Controllers
             }
             else
             {
-                _logger.LogError("Error occurred while updating contact with ID {Id}.", id);
-                if (!ContactExists(contact.Id))
-                {
-                    return View("_Error", new ErrorViewModel { Message = "Contact not found." });
-                }
-                else
-                {
-                    return View("_Error", new ErrorViewModel { Message = "An error occurred while updating the contact." });
-                }
+                return ErrorView("An error occurred while updating the contact.");
             }
         }
 
@@ -136,20 +125,23 @@ namespace ContactManager_WebApp.Controllers
                 }
                 else
                 {
-                    _logger.LogError("Error occurred while deleting contact with ID {Id}.", id);
-                    return View("_Error", new ErrorViewModel { Message = "An error occurred while deleting the contact." });
+                    return ErrorView("An error occurred while deleting the contact.");
                 }
             }
             else
             {
-                _logger.LogWarning("Attempted to delete non-existent contact with ID {Id}.", id);
-                return View("_Error", new ErrorViewModel { Message = "Contact not found." });
+                return ErrorView("Contact not found.");
             }
         }
 
         private bool ContactExists(int id)
         {
             return _repository.GetAllAsync().Result.Any(e => e.Id == id);
+        }
+
+        private IActionResult ErrorView(string message)
+        {
+            return View("_Error", new ErrorViewModel { Message = message });
         }
     }
 }
