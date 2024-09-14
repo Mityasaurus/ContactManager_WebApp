@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ContactManager_WebApp.Models;
+using ContactManager_WebApp.Data.Interfaces;
 
-namespace ContactManager_WebApp.Services
+namespace ContactManager_WebApp.Data
 {
     public class Repository<T>(ContactManagerContext context) : IRepository<T> where T : class
     {

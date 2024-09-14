@@ -1,4 +1,6 @@
-﻿using ContactManager_WebApp.Models;
+﻿using ContactManager_WebApp.Data;
+using ContactManager_WebApp.Data.Interfaces;
+using ContactManager_WebApp.Models;
 
 namespace ContactManager_WebApp.Services
 {

@@ -1,4 +1,4 @@
-using ContactManager_WebApp.Models;
+using ContactManager_WebApp.Data;
 using ContactManager_WebApp.Services;
 using Microsoft.EntityFrameworkCore;
 

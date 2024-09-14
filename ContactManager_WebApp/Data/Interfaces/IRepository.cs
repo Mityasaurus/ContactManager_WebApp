@@ -1,4 +1,4 @@
-﻿namespace ContactManager_WebApp.Services
+﻿namespace ContactManager_WebApp.Data.Interfaces
 {
     public interface IRepository<T>
     {

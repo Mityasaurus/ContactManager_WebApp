@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ContactManager_WebApp.Models;
 using ContactManager_WebApp.Services;
+using ContactManager_WebApp.Data.Interfaces;
 
 namespace ContactManager_WebApp.Controllers
 {
@@ -34,11 +35,20 @@ namespace ContactManager_WebApp.Controllers
             if (file == null || file.Length == 0)
             {
                 _logger.LogWarning("No file uploaded.");
-                return View();
+                return View("_Error", new ErrorViewModel { Message = "No file was uploaded." });
             }
 
             _logger.LogInformation("Processing CSV file upload.");
-            var records = _csvFileReader.GetRecordsFromFile(file);
+            IEnumerable<Contact> records;
+            try
+            {
+                records = _csvFileReader.GetRecordsFromFile(file);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return View("_Error", new ErrorViewModel { Message = "Invalid file format." });
+            }
 
             var result = await _repository.AddRangeAsync(records);
             if (result)
@@ -48,8 +58,9 @@ namespace ContactManager_WebApp.Controllers
             }
             else
             {
-                _logger.LogError("Error occurred while saving records to the database.");
-                return View();
+                string message = "Error occurred while saving records to the database.";
+                _logger.LogError(message);
+                return View("_Error", new ErrorViewModel { Message = message });
             }
         }
 
@@ -61,13 +72,13 @@ namespace ContactManager_WebApp.Controllers
             if (id != contact.Id)
             {
                 _logger.LogWarning("Contact ID mismatch: {Id}", id);
-                return NotFound();
+                return View("_Error", new ErrorViewModel { Message = "Contact ID mismatch." });
             }
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Invalid model state for contact update: {ModelState}", ModelState);
-                return BadRequest();
+                _logger.LogWarning("Invalid model state for contact update.");
+                return View("_Error", new ErrorViewModel { Message = "Invalid data provided." });
             }
 
             var result = await _repository.UpdateAsync(contact);
@@ -81,11 +92,11 @@ namespace ContactManager_WebApp.Controllers
                 _logger.LogError("Error occurred while updating contact with ID {Id}.", id);
                 if (!ContactExists(contact.Id))
                 {
-                    return NotFound();
+                    return View("_Error", new ErrorViewModel { Message = "Contact not found." });
                 }
                 else
                 {
-                    throw new DbUpdateConcurrencyException();
+                    return View("_Error", new ErrorViewModel { Message = "An error occurred while updating the contact." });
                 }
             }
         }
@@ -96,14 +107,14 @@ namespace ContactManager_WebApp.Controllers
             if (id == null)
             {
                 _logger.LogWarning("Contact ID is null for deletion.");
-                return NotFound();
+                return View("_Error", new ErrorViewModel { Message = "Contact ID is required." });
             }
 
             var contact = await _repository.GetAsync(id.Value);
             if (contact == null)
             {
                 _logger.LogWarning("Contact with ID {Id} not found.", id);
-                return NotFound();
+                return View("_Error", new ErrorViewModel { Message = "Contact not found." });
             }
 
             return View(contact);
@@ -121,18 +132,19 @@ namespace ContactManager_WebApp.Controllers
                 if (result)
                 {
                     _logger.LogInformation("Contact with ID {Id} deleted successfully.", id);
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     _logger.LogError("Error occurred while deleting contact with ID {Id}.", id);
+                    return View("_Error", new ErrorViewModel { Message = "An error occurred while deleting the contact." });
                 }
             }
             else
             {
                 _logger.LogWarning("Attempted to delete non-existent contact with ID {Id}.", id);
+                return View("_Error", new ErrorViewModel { Message = "Contact not found." });
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         private bool ContactExists(int id)
