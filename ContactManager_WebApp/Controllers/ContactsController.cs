@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ContactManager_WebApp.Models;
-using ContactManager_WebApp.Services;
-using ContactManager_WebApp.Data.Interfaces;
+﻿using ContactManager_WebApp.BusinessLogic.Services.Interfaces;
+using ContactManager_WebApp.DataAccess.Models;
+using ContactManager_WebApp.DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManager_WebApp.Controllers
 {

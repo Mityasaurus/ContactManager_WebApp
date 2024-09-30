@@ -1,4 +1,4 @@
-﻿namespace ContactManager_WebApp.Models
+﻿namespace ContactManager_WebApp.DataAccess.Models
 {
     public class ErrorViewModel
     {

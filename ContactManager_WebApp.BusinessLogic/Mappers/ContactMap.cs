@@ -1,7 +1,7 @@
-﻿using ContactManager_WebApp.Models;
+﻿using ContactManager_WebApp.DataAccess.Models;
 using CsvHelper.Configuration;
 
-namespace ContactManager_WebApp.Mappers
+namespace ContactManager_WebApp.BusinessLogic.Mappers
 {
     public class ContactMap : ClassMap<Contact>
     {

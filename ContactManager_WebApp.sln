@@ -3,7 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager_WebApp", "ContactManager_WebApp\ContactManager_WebApp.csproj", "{FD924BFD-1D25-4A7B-BCC6-12E5E1804E8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactManager_WebApp", "ContactManager_WebApp\ContactManager_WebApp.csproj", "{FD924BFD-1D25-4A7B-BCC6-12E5E1804E8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{534BD712-EB7E-434C-ABCD-B18980276AA2} = {534BD712-EB7E-434C-ABCD-B18980276AA2}
+		{6A29EEF8-4779-4C8A-B640-8CD9DBB23574} = {6A29EEF8-4779-4C8A-B640-8CD9DBB23574}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager_WebApp.BusinessLogic", "ContactManager_WebApp.BusinessLogic\ContactManager_WebApp.BusinessLogic.csproj", "{6A29EEF8-4779-4C8A-B640-8CD9DBB23574}"
+	ProjectSection(ProjectDependencies) = postProject
+		{534BD712-EB7E-434C-ABCD-B18980276AA2} = {534BD712-EB7E-434C-ABCD-B18980276AA2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactManager_WebApp.DataAccess", "ContactManager_WebApp.DataAccess\ContactManager_WebApp.DataAccess.csproj", "{534BD712-EB7E-434C-ABCD-B18980276AA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +26,14 @@ Global
 		{FD924BFD-1D25-4A7B-BCC6-12E5E1804E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD924BFD-1D25-4A7B-BCC6-12E5E1804E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD924BFD-1D25-4A7B-BCC6-12E5E1804E8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A29EEF8-4779-4C8A-B640-8CD9DBB23574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A29EEF8-4779-4C8A-B640-8CD9DBB23574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A29EEF8-4779-4C8A-B640-8CD9DBB23574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A29EEF8-4779-4C8A-B640-8CD9DBB23574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{534BD712-EB7E-434C-ABCD-B18980276AA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{534BD712-EB7E-434C-ABCD-B18980276AA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{534BD712-EB7E-434C-ABCD-B18980276AA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{534BD712-EB7E-434C-ABCD-B18980276AA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

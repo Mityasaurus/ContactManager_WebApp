@@ -1,9 +1,11 @@
-﻿using ContactManager_WebApp.Mappers;
-using ContactManager_WebApp.Models;
+﻿using ContactManager_WebApp.BusinessLogic.Mappers;
+using ContactManager_WebApp.BusinessLogic.Services.Interfaces;
+using ContactManager_WebApp.DataAccess.Models;
 using CsvHelper;
+using Microsoft.AspNetCore.Http;
 using System.Text;
 
-namespace ContactManager_WebApp.Services
+namespace ContactManager_WebApp.BusinessLogic.Services
 {
     public class CsvFileReader : ICsvFileReader<Contact>
     {

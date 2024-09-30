@@ -1,6 +1,6 @@
-﻿using ContactManager_WebApp.Models;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace ContactManager_WebApp.Services
+namespace ContactManager_WebApp.BusinessLogic.Services.Interfaces
 {
     public interface ICsvFileReader<T>
     {

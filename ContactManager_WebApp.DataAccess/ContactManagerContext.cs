@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using ContactManager_WebApp.Models;
+﻿using ContactManager_WebApp.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContactManager_WebApp.Data;
+namespace ContactManager_WebApp.DataAccess;
 
 public partial class ContactManagerContext : DbContext
 {

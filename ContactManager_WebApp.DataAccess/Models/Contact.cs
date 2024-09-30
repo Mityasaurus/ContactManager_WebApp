@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ContactManager_WebApp.Models;
+namespace ContactManager_WebApp.DataAccess.Models;
 
 public partial class Contact
 {

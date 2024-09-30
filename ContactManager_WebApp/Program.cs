@@ -1,6 +1,6 @@
-using ContactManager_WebApp.Data;
-using ContactManager_WebApp.Services;
+using ContactManager_WebApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using ContactManager_WebApp.BusinessLogic.Installers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddDbContext<ContactManagerContext>(options =>
 
 builder.Services.AddCsvReaderService();
 
-builder.Services.AddRepositoryService();
+builder.Services.AddContactsRepository();
 
 builder.Services.AddControllersWithViews();
 
